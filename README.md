@@ -124,7 +124,7 @@ Given the inferred COSIE embeddings from label transfer, this step predicts virt
 - Run virtual prediction
 
     ```
-    python Step4_2_virtual_prediction.py \
+    python 2_virtual_prediction.py \
         --inference-root /path/to/inference-root \
         --bundle-dir /path/to/inference-root/Virtual_prediction_reference
     ```
