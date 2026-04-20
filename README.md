@@ -172,9 +172,9 @@ This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You 
 
 - Run preprocessing
     ```
-    python Preprocessing_HE.py --data-root /your_data_path
-    python Preprocessing_RNA.py --data-root /your_data_path
-    python Preprocessing_Protein.py --data-root /your_data_path
+    python Preprocessing_HE.py --data-root /your_data_path/Data
+    python Preprocessing_RNA.py --data-root /your_data_path/Data
+    python Preprocessing_Protein.py --data-root /your_data_path/Data
     python Summarize_all_modalities.py --data-root /your_data_path/Data_preprocessing
     ```
 
@@ -192,7 +192,7 @@ If your data already contain low-dimensional modality features, you can Step 2.1
 
 - Organize your data as follows:
     ```
-    project_root/
+    your_data_path/
     ├── sections.txt
     ├── HE/
     │   ├── adata_s1.h5ad
@@ -219,12 +219,12 @@ If your data already contain low-dimensional modality features, you can Step 2.1
         ```
 - Run build_your_own_dict.py:
     ```
-    python Build_your_own_dict.py --project-root /path/to/project_root
+    python Build_your_own_dict.py --project-root /path/to/your_data_path
     ```
 
 - Output file structure:
     ```
-    project_root/Data_preprocessing/
+    your_data_path/Data_preprocessing/
     ├── feature_dict_concat.pkl
     ├── data_dict_processed_concat.pkl
     ├── spatial_loc_dict.pkl
@@ -232,9 +232,11 @@ If your data already contain low-dimensional modality features, you can Step 2.1
 
 ## 2.3. Training and clustering
 
+Ensure your `/path/to/your_data_path/` contains `/Data_preprocessing/` folder. 
+
 ```
-python Training.py --project-root /path/to/project_root
-python Clustering.py --project-root /path/to/project_root --n-clusters 25
+python Training.py --project-root /path/to/your_data_path
+python Clustering.py --project-root /path/to/your_data_path --n-clusters 25
 ```
 
 Embedding and clustering results will be saved in `/Embedding` and `/Clustering`.
