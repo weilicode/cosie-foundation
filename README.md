@@ -28,7 +28,7 @@
 # Installation
 
 
-
+(Note: COSIE-Foundation uses the same environment as [COSIE](https://github.com/weilicode/cosie). If COSIE has already been installed, the existing COSIE_env can be reused without additional setup.)
 
 For convenience, we recommend creating and activating a dedicated conda environment before installing COSIE-Foundation.
 If you haven't installed conda yet, we suggest using [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main), a lightweight distribution of conda.
@@ -94,7 +94,7 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
     - X: feature matrix  
     - obsm["spatial"]
 
-    Example query data can be downloaded from [Here](chage link)
+    Example `adata_query.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2)
 
 - Run label transfer
 
