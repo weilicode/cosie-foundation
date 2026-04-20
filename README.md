@@ -1,7 +1,7 @@
 
 
 <p align="left">
-  <img src=./Image/COSIE_Foundation_logo.png width="300"/>
+  <img src=./Image/COSIE_Foundation_logo.png width="500"/>
 </p>
 
 [![python >3.9.19](https://img.shields.io/badge/python-3.9.19-blue)](https://www.python.org/) 
