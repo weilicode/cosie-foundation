@@ -94,7 +94,7 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
     - X: feature matrix  
     - obsm["spatial"]
 
-    Example `adata_query.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2)
+    Example `adata_query.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2).
 
 - Run label transfer
 
@@ -147,7 +147,7 @@ cd Train
 
 ## 2.1. Data preprocessing (Optional)
 
-This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You can go directly to Step 2 if your data are already preprocessed.
+This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You can go directly to Step 2.2 if your data are already preprocessed.
 
 - Organize your input data as:
     ```
@@ -188,7 +188,7 @@ This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You 
 
 ## 2.2. Build your own dictionaries (skip preprocessing)
 
-If your data already contain low-dimensional modality features, you can Step 1 and directly construct COSIE inputs. 
+If your data already contain low-dimensional modality features, you can Step 2.1 and directly construct COSIE inputs. 
 
 - Organize your data as follows:
     ```
@@ -207,7 +207,7 @@ If your data already contain low-dimensional modality features, you can Step 1 a
         ├── adata_s3.h5ad
         └── ...
     ```
-    Each file must contain:
+    Each .h5ad file must contain:
     - obsm["spatial"]
     - modality-specific embeddings stored in obsm
     - sections.txt defines the section order with one section name per line:
@@ -238,3 +238,8 @@ python Clustering.py --project-root /path/to/project_root --n-clusters 25
 ```
 
 Embedding and clustering results will be saved in `/Embedding` and `/Clustering`.
+
+
+
+# Questions
+If you have any questions about COSIE-Foundation, feel free to open an [issue](https://github.com/weilicode/cosie-foundation/issues) or contact us via email(Wei.Li@PennMedicine.upenn.edu).
