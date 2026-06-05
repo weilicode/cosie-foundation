@@ -88,8 +88,8 @@ cd Inference
 
 Given a query section, COSIE-Foundation projects it into COSIE embedding space and outputs fine-grained tissue structure annotations.
 
-- Download the pretrained COSIE-Foundation checkpoint from
-[COSIE_Foundation_checkpoint.zip](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2). Then unzip and place it under: `<inference-root>/COSIE_Foundation_checkpoint/`
+- Download the pretrained COSIE-Foundation checkpoint from Hugging face
+[COSIE_Foundation_checkpoint.zip](https://huggingface.co/pennweili/cosie-foundation). Then unzip and place it under: `<inference-root>/COSIE_Foundation_checkpoint/`
 - Prepare query data `adata_query.h5ad`, which must contain:
     - X: feature matrix  
     - obsm["spatial"]
@@ -115,7 +115,7 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
 
 Given the inferred COSIE embeddings from label transfer, this step predicts virtual RNA / Protein features for the query section.
 
-- Download the virtual prediction reference from [Virtual_prediction_reference.zip](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
+- Download the virtual prediction reference from [Virtual_prediction_reference.zip](https://huggingface.co/pennweili/cosie-foundation). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
 
 - Make sure the previous label transfer has been completed and the following file exists:
 
