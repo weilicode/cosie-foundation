@@ -8,11 +8,11 @@
 
 
 
-**COSIE-Foundation** is a unified framework for large-scale spatial multimodal integration, label transfer, and virtual molecular prediction. It supports two main use cases:
+**COSIE-Foundation** is a unified framework for large-scale spatial multimodal integration, virtual pathology annotation, and virtual gene&protein prediction, all at cellular resolution. It supports two main use cases:
 
 **1. Direct inference** using a pretrained COSIE-Foundation model for query section, including
-   - Label transfer
-   - Virtual gene / protein prediction
+   - Virtual pathology annotation
+   - Virtual gene & protein prediction
 
 **2. Training your own model from scratch**  
    - Train COSIE-Foundation on your own ultra large-scale spatial multimodal dataset.
@@ -84,11 +84,11 @@ cd Inference
 
 
 
-## 1.1 Label transfer
+## 1.1 Virtual pathology annotation
 
-Given a query section, COSIE-Foundation projects it into COSIE embedding space and outputs fine-grained tissue structure annotations.
+Given a query section, COSIE-Foundation projects it into COSIE embedding space and predicts virtual pathology annotations at cellular resolution.
 
-- Download the pretrained COSIE-Foundation checkpoint from Hugging face:
+- Download the pretrained COSIE-Foundation checkpoint from **Hugging face**:
 [COSIE_Foundation_checkpoint.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/COSIE_Foundation_checkpoint/`
 - Prepare query data `adata_query.h5ad`, which must contain:
     - X: feature matrix  
@@ -96,7 +96,7 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
 
     Example `adata_query.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2).
 
-- Run label transfer
+- Run virtual pathology annotation:
 
     ```
     python 1_label_transfer.py \
@@ -107,15 +107,15 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
     The following outputs will be saved in `inference-root`:
 
     - adata_query_inferred.h5ad — inferred embeddings and labels
-    - celltype_labels.png — visualization of predicted structures
+    - celltype_labels.png — visualization of predicted pathology annotations
 
 
 
 ## 1.2. Virtual prediction
 
-Given the inferred COSIE embeddings from label transfer, this step predicts virtual RNA / Protein features for the query section.
+Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RNA & Protein data for the query section.
 
-- Download the virtual prediction reference from Hugging face:[Virtual_prediction_reference.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
+- Download the virtual prediction reference from **Hugging face**:[Virtual_prediction_reference.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
 
 - Make sure the previous label transfer has been completed and the following file exists:
 
@@ -131,7 +131,7 @@ Given the inferred COSIE embeddings from label transfer, this step predicts virt
 
     The following output will be saved in `inference-root`:
 
-    - `adata_query_predicted.h5ad` — predicted RNA / Protein features
+    - `adata_query_predicted.h5ad` — predicted RNA & Protein data
 
 
 
