@@ -8,14 +8,10 @@ from sklearn.preprocessing import MinMaxScaler
 from anndata import AnnData
 from scipy.cluster.hierarchy import linkage, dendrogram
 from collections import defaultdict
-
-
 import torch
 import anndata as ad
 from annoy import AnnoyIndex
 from sklearn.preprocessing import normalize
-
-
 import matplotlib as mpl
 import scanpy as sc
 from matplotlib.cm import get_cmap
@@ -23,9 +19,6 @@ from matplotlib import patches
 from pandas.api.types import CategoricalDtype
 from matplotlib.colors import to_rgb
 from .utils import nn_approx
-
-
-
 mpl.rcParams['pdf.fonttype'] = 42
 
 

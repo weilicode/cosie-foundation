@@ -21,6 +21,7 @@ from COSIE_Foundation.downstream_analysis import cluster_and_visualize_superpixe
 from COSIE_Foundation.tl import map_embedding
 
 
+
 def parse_args():
     parser = argparse.ArgumentParser("COSIE inference pipeline")
 

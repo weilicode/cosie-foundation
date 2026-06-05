@@ -14,6 +14,7 @@ import anndata as ad
 from annoy import AnnoyIndex
 from COSIE_Foundation.utils import *
 
+
 def parse_args():
     parser = argparse.ArgumentParser("COSIE virtual prediction pipeline")
 

@@ -2,18 +2,14 @@
 ## https://github.com/potulabe/symphonypy/tree/main
 
 from __future__ import annotations
-
 import logging
 import warnings
-
 import numpy as np
 import pandas as pd
-
 from anndata import AnnData
 from harmonypy import run_harmony
 from scipy.sparse import issparse
 from sklearn.cluster import KMeans
-
 from scanpy.tools._ingest import Ingest, _DimDict
 
 logger = logging.getLogger("symphonypy")

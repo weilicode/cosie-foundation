@@ -10,6 +10,7 @@ from ._utils import _harmony_integrate_python, _harmony_integrate_R
 logger = logging.getLogger("symphonypy")
 
 
+
 def harmony_integrate(
     adata: AnnData,
     key: list[str] | str,
