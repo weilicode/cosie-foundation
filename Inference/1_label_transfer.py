@@ -352,10 +352,9 @@ def main():
         "Vessels": [8, 10],
         "Normal lung": [1, 4, 9, 13, 15, 18, 21, 23],
         "Pneumocytes": [17],
-        "Tumor": [2, 5, 6, 7, 14, 16, 19],
+        "Tumor": [2, 5, 6, 7, 14, 16, 19, 20],
         "Fibrous tissue": [0, 12, 22],
         "Lymphoid aggregates": [24],
-        "Fibrous+tumor": [20],
     }
 
     colormap = [
@@ -367,7 +366,6 @@ def main():
         [220, 20, 60],    # Tumor
         [247, 182, 210],  # Fibrous tissue
         [139, 69, 19],    # Lymphoid aggregates
-        [0, 191, 255],    # Fibrous+tumor
     ]
 
     legend_labels = [
