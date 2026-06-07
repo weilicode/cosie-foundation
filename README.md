@@ -25,6 +25,8 @@
 </p>
 
 
+**Tutorial can be found [here](./Tutorial.ipynb)**
+
 # Installation
 
 
@@ -75,10 +77,9 @@ pip install -r requirements.txt
 
 # 🔹 1. Direct inference using pretrained COSIE-Foundation
 
-Copy the core package into your inference folder:
+Navigate to the inference directory:
 
 ```
-cp -r ./COSIE_Foundation ./Inference/
 cd Inference
 ```
 

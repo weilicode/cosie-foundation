@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import sys
 import os
+sys.path.append(
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..")
+    )
+)
+
 import gc
 import pickle
 import argparse
@@ -96,7 +102,7 @@ def main():
     # 3. Read query adata and decide whether to use metacell
     # =========================================================
     print("\n" + "=" * 80)
-    print("Step 1. Read query adata and decide metacell mode")
+    print("Step 1. Read query adata")
     print("=" * 80)
 
     adata_query_raw = sc.read_h5ad(str(adata_path), backed="r")
@@ -105,7 +111,7 @@ def main():
     block_size = 2
 
     print(f"Query n_obs = {adata_query_raw.n_obs}")
-    print(f"use_metacell = {use_metacell}, block_size = {block_size}")
+    # print(f"use_metacell = {use_metacell}, block_size = {block_size}")
 
     if use_metacell:
         adata_meta = build_metacells_grid_fast(
@@ -116,9 +122,9 @@ def main():
 
         meta_id_per_cell = adata_meta.uns["meta_id_per_cell"]
         n_meta = adata_meta.n_obs
-        print(f"Original n = {adata_query_raw.n_obs} -> Metacell n = {n_meta}")
+        # print(f"Original n = {adata_query_raw.n_obs} -> Metacell n = {n_meta}")
 
-        print("Aggregating dense X to metacell mean ...")
+        # print("Aggregating dense X to metacell mean ...")
         X_meta_mean = aggregate_X_to_metacell_mean_dense(
             adata_query_raw.X,
             meta_id_per_cell,
@@ -144,7 +150,7 @@ def main():
 
     pca = joblib.load(str(pca_path))
     k = pca.n_components_
-    print(f"PCA target dim = {k}, n = {n}")
+    # print(f"PCA target dim = {k}, n = {n}")
 
     X_pca_mm_path = out_dir / "X_pca_50d.float32.dat"
     X_pca_mm = np.memmap(X_pca_mm_path, dtype="float32", mode="w+", shape=(n, k))
@@ -155,7 +161,7 @@ def main():
 
         for s in range(0, n, bs):
             e = min(s + bs, n)
-            print(f"PCA(meta) batch: {s}:{e}")
+            # print(f"PCA(meta) batch: {s}:{e}")
             Xb = np.asarray(X2048[s:e], dtype=np.float32, order="C")
             X_pca_mm[s:e] = pca.transform(Xb).astype(np.float32, copy=False)
             del Xb
@@ -360,10 +366,10 @@ def main():
     colormap = [
         [255, 127, 14],   # Macrophages
         [188, 189, 34],   # Bronchus
-        [148, 103, 189],  # Vessels
+        [220, 20, 60],  # Vessels
         [173, 216, 230],  # Normal lung
         [77, 175, 74],    # Pneumocytes
-        [220, 20, 60],    # Tumor
+        [148, 103, 189],    # Tumor
         [247, 182, 210],  # Fibrous tissue
         [139, 69, 19],    # Lymphoid aggregates
     ]
@@ -398,7 +404,6 @@ def main():
         obs_key=group_key,
         colormap=colormap,
         legend_labels=legend_labels,
-        swap_xy=True,
         figscale=200,
         save_path=fig_path,
     )

@@ -661,7 +661,10 @@ def visualize_superpixel_from_adata(
             cluster_names = legend_labels
             num_clusters = len(legend_labels)
         else:
-            cluster_names = list(labels.cat.categories)
+            cluster_names = [
+                str(x).split(" (")[0]
+                for x in labels.cat.categories
+            ]
             num_clusters = len(cluster_names)
 
     else:
@@ -686,6 +689,11 @@ def visualize_superpixel_from_adata(
         image = image[:, ::-1]
     if invert_y:
         image = image[::-1, :]
+
+    cluster_names = [
+        str(x).split(" (")[0]
+        for x in cluster_names
+    ]
 
     # ---- plot ----
     plot_histology_clusters(
