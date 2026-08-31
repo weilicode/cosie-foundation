@@ -10,7 +10,7 @@
 
 **COSIE-Foundation** is a unified framework for large-scale spatial multimodal integration, virtual pathology annotation, and virtual gene&protein prediction, all at cellular resolution. It supports two main use cases:
 
-**1. Direct inference** using a pretrained COSIE-Foundation model for query section, including
+**1. Direct inference** using a pretrained COSIE-Foundation model for a query section, including
    - Virtual pathology annotation
    - Virtual gene & protein prediction
 
@@ -30,7 +30,6 @@
 # Installation
 
 
-(Note: COSIE-Foundation uses the same environment as [COSIE](https://github.com/weilicode/cosie). If COSIE has already been installed, the existing COSIE_env can be reused without additional setup.)
 
 For convenience, we recommend creating and activating a dedicated conda environment before installing COSIE-Foundation.
 If you haven't installed conda yet, we suggest using [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main), a lightweight distribution of conda.
@@ -87,22 +86,23 @@ cd Inference
 
 ## 1.1 Virtual pathology annotation
 
-Given a query section, COSIE-Foundation projects it into COSIE embedding space and predicts virtual pathology annotations at cellular resolution.
+Given a query section (HE/RNA/Protein as input), COSIE-Foundation projects it into COSIE embedding space and predicts virtual pathology annotations at cellular resolution.
 
-- Download the pretrained COSIE-Foundation checkpoint from **Hugging face**:
+- Download the pretrained COSIE-Foundation checkpoint from **Hugging Face**:
 [COSIE_Foundation_checkpoint.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/COSIE_Foundation_checkpoint/`
 - Prepare query data `adata_query.h5ad`, which must contain:
     - X: feature matrix  
     - obsm["spatial"]
 
-    Example `adata_query.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2).
+    Example `adata_query_HE.h5ad`,`adata_query_RNA.h5ad`, and `adata_query_Protein.h5ad` can be downloaded from [Here](https://upenn.box.com/s/60vz0bnigt38y7332mpxfvkiam067zt2).
 
 - Run virtual pathology annotation:
 
     ```
     python 1_label_transfer.py \
         --out-root /path/to/inference-root \
-        --adata-path /path/to/adata_query.h5ad
+        --adata-path /path/to/adata_query_HE.h5ad \
+        --modality HE
     ```
 
     The following outputs will be saved in `inference-root`:
@@ -112,7 +112,7 @@ Given a query section, COSIE-Foundation projects it into COSIE embedding space a
 
 
 
-## 1.2. Virtual prediction
+## 1.2 Virtual prediction
 
 Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RNA & Protein data for the query section.
 

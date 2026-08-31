@@ -86,12 +86,20 @@ def main():
 
     print("\n========== Query prediction ==========")
     print(f"[Input] cell_h5ad: {cell_h5ad}")
-    print(f"[Input] meta_h5ad: {meta_h5ad} | exists={meta_h5ad.exists()}")
-    print(f"[Ref] embedding dim = {d}")
-    print(f"[Ref] total predicted features = {n_f}")
 
-    use_metacell = meta_h5ad.exists()
-    print(f"[Mode] use_metacell = {use_metacell}")
+    # use_metacell = meta_h5ad.exists()
+    adata_check = sc.read_h5ad(str(cell_h5ad), backed="r")
+    use_metacell = bool(adata_check.uns.get("use_metacell", False))
+    input_modality = adata_check.uns.get("input_modality", "Unknown")
+    adata_check.file.close()
+    del adata_check
+    
+    print(f"[Query] input modality = {input_modality}")
+    
+    if use_metacell and not meta_h5ad.exists():
+        raise FileNotFoundError(
+            f"Query indicates use_metacell=True, but metacell file is missing: {meta_h5ad}"
+        )
 
     # ========================================================
     # A. metacell mode
@@ -108,38 +116,17 @@ def main():
             raise ValueError(f"metacell X_ipca dim {query_emb_meta.shape[1]} != ref dim {d}")
 
         n_meta = query_emb_meta.shape[0]
-        print(f"[Metacell] query_emb_meta shape = {query_emb_meta.shape}")
 
-        # out_prefix_meta = str(inference_root / "imputed_rna_adt_metacell")
-        # mm_path_meta = out_prefix_meta + f".K{K}.float32.dat"
-
-        # if os.path.exists(mm_path_meta):
-        #     print(f"[Metacell] memmap exists, reuse: {mm_path_meta}")
-        # else:
-        #     mm_path_meta, _ = impute_shared_features_annoy(
-        #         X_src_list=X_src_list,
-        #         annoy_index=annoy,
-        #         pool_sec=pool_sec,
-        #         pool_row=pool_row,
-        #         query_emb=query_emb_meta,
-        #         feature_names=feature_names,
-        #         K=K,
-        #         out_prefix=out_prefix_meta,
-        #         block_query=block_query,
-        #         verbose=verbose
-        #     )
-        #     print(f"[Metacell] saved memmap: {mm_path_meta}")
 
         out_prefix_meta = str(inference_root / "imputed_rna_adt_metacell")
         mm_path_meta = out_prefix_meta + f".K{K}.float32.dat"
         done_path_meta = out_prefix_meta + f".K{K}.done"
         
         if os.path.exists(mm_path_meta) and os.path.exists(done_path_meta):
-            print(f"[Metacell] completed memmap exists, reuse: {mm_path_meta}")
+            print('Running')
         else:
             # stale/incomplete file cleanup
             if os.path.exists(mm_path_meta):
-                print(f"[Metacell] found incomplete memmap, deleting: {mm_path_meta}")
                 os.remove(mm_path_meta)
             if os.path.exists(done_path_meta):
                 os.remove(done_path_meta)
@@ -161,8 +148,6 @@ def main():
             with open(done_path_meta, "w") as f:
                 f.write("done\n")
         
-            print(f"[Metacell] saved memmap: {mm_path_meta}")
-            print(f"[Metacell] saved done flag: {done_path_meta}")
 
         # --------------------------------------------
         # Broadcast back to cell-level
@@ -174,14 +159,6 @@ def main():
 
         n_cell = adata_cell.n_obs
 
-
-        # print("[Broadcast] inferring cell-to-metacell mapping by nearest metacell in X_ipca space ...")
-
-        # from sklearn.metrics import pairwise_distances_argmin
-        # meta_id_per_cell = pairwise_distances_argmin(
-        #     np.asarray(adata_cell.obsm["X_ipca"], dtype=np.float32),
-        #     np.asarray(adata_meta.obsm["X_ipca"], dtype=np.float32),
-        # ).astype(np.int64)
         if "meta_id_per_cell" not in adata_meta.uns:
             raise KeyError("Missing uns['meta_id_per_cell'] in adata_query_metacell_inferred.h5ad")
         
@@ -190,11 +167,9 @@ def main():
             raise ValueError(
                 f"meta_id_per_cell length {meta_id_per_cell.shape[0]} != n_cell {n_cell}"
             )
-        print(f"[Broadcast] loaded meta_id_per_cell from metacell h5ad, shape={meta_id_per_cell.shape}")
 
         X_meta_mm = np.memmap(mm_path_meta, dtype="float32", mode="r", shape=(n_meta, n_f))
 
-        print(f"[Broadcast] allocating cell matrix: ({n_cell}, {n_f})")
         X_cell = X_meta_mm[meta_id_per_cell, :]
 
         adata_out = ad.AnnData(
@@ -210,6 +185,8 @@ def main():
         if "X_ipca" in adata_cell.obsm:
             adata_out.obsm["X_ipca"] = adata_cell.obsm["X_ipca"].copy()
 
+        adata_out.uns["input_modality"] = input_modality
+        adata_out.uns["use_metacell"] = bool(use_metacell)
         adata_out.write_h5ad(str(out_h5ad))
         print(f"[Done] saved: {out_h5ad}")
 
@@ -217,11 +194,13 @@ def main():
         gc.collect()
 
         if cleanup_mm:
-            try:
-                os.remove(mm_path_meta)
-                print(f"[Cleanup] deleted memmap: {mm_path_meta}")
-            except Exception as e:
-                print(f"[Cleanup-WARN] failed to delete memmap: {mm_path_meta} | {repr(e)}")
+            for f in [mm_path_meta, done_path_meta]:
+                try:
+                    if os.path.exists(f):
+                        os.remove(f)
+                        print(f"[Cleanup] deleted: {f}")
+                except Exception as e:
+                    print(f"[Cleanup-WARN] failed to delete: {f} | {repr(e)}")
 
     # ========================================================
     # B. cell-level mode
@@ -237,19 +216,6 @@ def main():
         if query_emb.shape[1] != d:
             raise ValueError(f"cell X_ipca dim {query_emb.shape[1]} != ref dim {d}")
 
-        # out_prefix = str(inference_root / "imputed_rna_adt")
-        # mm_path, _ = impute_shared_features_annoy(
-        #     X_src_list=X_src_list,
-        #     annoy_index=annoy,
-        #     pool_sec=pool_sec,
-        #     pool_row=pool_row,
-        #     query_emb=query_emb,
-        #     feature_names=feature_names,
-        #     K=K,
-        #     out_prefix=out_prefix,
-        #     block_query=block_query,
-        #     verbose=verbose
-        # )
         out_prefix = str(inference_root / "imputed_rna_adt")
         mm_path = out_prefix + f".K{K}.float32.dat"
         done_path = out_prefix + f".K{K}.done"
@@ -299,6 +265,8 @@ def main():
         if "X_ipca" in adata_cell.obsm:
             adata_out.obsm["X_ipca"] = adata_cell.obsm["X_ipca"].copy()
 
+        adata_out.uns["input_modality"] = input_modality
+        adata_out.uns["use_metacell"] = bool(use_metacell)
         adata_out.write_h5ad(str(out_h5ad))
         print(f"[Done] saved: {out_h5ad}")
 
@@ -306,11 +274,13 @@ def main():
         gc.collect()
 
         if cleanup_mm:
-            try:
-                os.remove(mm_path)
-                print(f"[Cleanup] deleted memmap: {mm_path}")
-            except Exception as e:
-                print(f"[Cleanup-WARN] failed to delete memmap: {mm_path} | {repr(e)}")
+            for f in [mm_path, done_path]:
+                try:
+                    if os.path.exists(f):
+                        os.remove(f)
+                        print(f"[Cleanup] deleted: {f}")
+                except Exception as e:
+                    print(f"[Cleanup-WARN] failed to delete: {f} | {repr(e)}")
 
     print("\nAll prediction outputs finished.")
 
