@@ -25,7 +25,13 @@
 </p>
 
 
-**Tutorial can be found [here](./Tutorial.ipynb)**
+
+**Example tutorials for each input modality are provided here:**
+
+- [H&E-only inference tutorial](./Tutorial_HE_only_inference.ipynb)
+- [RNA-only inference tutorial](./Tutorial_RNA_only_inference.ipynb)
+- [Protein-only inference tutorial](./Tutorial_Protein_only_inference.ipynb)
+
 
 # Installation
 
@@ -72,11 +78,6 @@ All other required packages are listed in [requirements.txt](requirements.txt). 
 pip install -r requirements.txt
 ```
 
-Example tutorials for each input modality are provided here:
-
-- [H&E-only inference tutorial](./Tutorial_HE_only_inference.ipynb)
-- [RNA-only inference tutorial](./Tutorial_RNA_only_inference.ipynb)
-- [Protein-only inference tutorial](./Tutorial_Protein_only_inference.ipynb)
 
 # 🔹 1. Direct inference using pretrained COSIE-Foundation
 
