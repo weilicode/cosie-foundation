@@ -90,7 +90,7 @@ Given a query section (HE/RNA/Protein as input), COSIE-Foundation projects it in
 
 - Download the pretrained COSIE-Foundation checkpoint from **Hugging Face**:
 [COSIE_Foundation_checkpoint.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/COSIE_Foundation_checkpoint/`
-- Prepare query data `adata_query.h5ad`, which must contain:
+- Prepare query data, which must contain:
     - X: feature matrix  
     - obsm["spatial"]
 
