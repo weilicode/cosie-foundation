@@ -230,7 +230,7 @@ def main():
         n_y=1
     )
 
-    print("Training finished.")
+    print("Training finished")
 
     
 
