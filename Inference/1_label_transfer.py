@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument("--out-root", type=str, required=True, help="Output root. Checkpoints expected under <out-root>/COSIE_Foundation_checkpoint/")
     parser.add_argument("--adata-path", type=str, required=True, help="Path to query h5ad")
     parser.add_argument("--modality", type=str, required=True, choices=["HE", "RNA", "Protein"], help="Input modality: HE, RNA, or Protein")
+    parser.add_argument("--use-metacell", action="store_true", help="Enable metacell aggregation. Default: disabled.")
     return parser.parse_args()
 
 
@@ -88,7 +89,7 @@ def main():
     # ---------------------------------------------------------
     if modality == "HE":
         adata_query_raw = sc.read_h5ad(str(adata_path), backed="r")
-        use_metacell = adata_query_raw.n_obs > 5000000
+        use_metacell = args.use_metacell
         block_size = 2
 
         print(f"Query n_obs = {adata_query_raw.n_obs}")

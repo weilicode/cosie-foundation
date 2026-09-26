@@ -123,7 +123,7 @@ def main():
         done_path_meta = out_prefix_meta + f".K{K}.done"
         
         if os.path.exists(mm_path_meta) and os.path.exists(done_path_meta):
-            print('Running')
+            print('Running...')
         else:
             # stale/incomplete file cleanup
             if os.path.exists(mm_path_meta):
@@ -198,7 +198,6 @@ def main():
                 try:
                     if os.path.exists(f):
                         os.remove(f)
-                        print(f"[Cleanup] deleted: {f}")
                 except Exception as e:
                     print(f"[Cleanup-WARN] failed to delete: {f} | {repr(e)}")
 

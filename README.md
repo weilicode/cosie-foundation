@@ -115,7 +115,9 @@ Given a query section (HE/RNA/Protein as input), COSIE-Foundation projects it in
     - adata_query_inferred.h5ad — inferred embeddings and labels
     - celltype_labels.png — visualization of predicted pathology annotations
 
+- Optional metacell mode for large query sections:
 
+    By default, COSIE-Foundation performs inference directly on individual superpixels. For very large query sections, users may optionally enable 2 × 2 metacell aggregation to reduce memory usage and inference time. To enable metacell-based inference, add the `--use-metacell` flag.
 
 ## 1.2 Virtual prediction
 
