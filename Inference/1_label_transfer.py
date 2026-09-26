@@ -101,7 +101,6 @@ def main():
             X_meta_mean = aggregate_X_to_metacell_mean_dense(adata_query_raw.X, meta_id_per_cell, n_meta=n, bs=20000)
             adata_meta.obsm["X_2048_mean"] = X_meta_mean
             adata_work = adata_meta
-            print(f"Original n = {adata_query_raw.n_obs} -> Metacell n = {n}")
         else:
             meta_id_per_cell = None
             adata_work = adata_query_raw
