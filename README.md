@@ -143,11 +143,12 @@ Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RN
 
 
 
-## 🔸 2. Train your own model
+
+# 🔸 2. Train your own model
 
 To train COSIE-Foundation on your own dataset:
 
-```
+```bash
 cp -r ./COSIE_Foundation ./Train/
 cd Train
 ```
@@ -155,10 +156,12 @@ cd Train
 
 ## 2.1. Data preprocessing (Optional)
 
-This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You can go directly to Step 2.2 if your data are already preprocessed.
+This step preprocesses H&E, RNA, and Protein data for COSIE-Foundation training. You can skip this step and proceed directly to **Step 2.2** if your data have been preprocessed.
 
-- Organize your input data as:
-    ```
+
+- Organize the input data as:
+
+    ```text
     Data/
     ├── HE/
     │   ├── adata_s1.h5ad
@@ -173,13 +176,26 @@ This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You 
         ├── adata_s5.h5ad
         └── ...
     ```
-    Each file must follow `adata_<section_name>.h5ad`. Required contents of each .h5ad:
-    - X: raw data matrix
-    - obsm["spatial"]: spatial coordinates
-    - var_names: feature names (for RNA / Protein)
 
-- Run preprocessing
-    ```
+    Each file should follow the naming convention: ```adata_<section_name>.h5ad```. 
+
+
+    For H&E data, each `.h5ad` file should contain:
+    
+    - obsm["UNI_feature"]: UNI image features
+    - obsm["spatial"]: spatial coordinates
+
+    For RNA and Protein data, each `.h5ad` file should contain:
+
+    - X: raw molecular feature matrix
+    - obsm["spatial"]: spatial coordinates
+    - var_names: gene or protein names
+
+
+
+- Run preprocessing:
+
+    ```bash
     python Preprocessing_HE.py --data-root /your_data_path/Data
     python Preprocessing_RNA.py --data-root /your_data_path/Data
     python Preprocessing_Protein.py --data-root /your_data_path/Data
@@ -187,18 +203,24 @@ This step prepares HE, RNA, and Protein data for COSIE-Foundation training. You 
     ```
 
 - Output file structure:
+    
     ```
     Data_preprocessing/
     ├── feature_dict_concat.pkl
     ├── data_dict_processed_concat.pkl
-    ├── spatial_loc_dict.pkl
+    └── spatial_loc_dict.pkl
     ```
+
+
+
 
 ## 2.2. Build your own dictionaries (skip preprocessing)
 
-If your data already contain low-dimensional modality features, you can Step 2.1 and directly construct COSIE inputs. 
+If your data already contain low-dimensional modality representations, you can skip **Step 2.1** and directly construct the COSIE training inputs.
 
-- Organize your data as follows:
+
+- Organize your data as:
+
     ```
     your_data_path/
     ├── sections.txt
@@ -215,39 +237,58 @@ If your data already contain low-dimensional modality features, you can Step 2.1
         ├── adata_s3.h5ad
         └── ...
     ```
-    Each .h5ad file must contain:
+
+
+
+    Each `.h5ad` file should contain:
+
     - obsm["spatial"]
-    - modality-specific embeddings stored in obsm
-    - sections.txt defines the section order with one section name per line:
-        ```
-        s1
-        s2
-        s3
-        ...
-        ```
-- Run build_your_own_dict.py:
+    - modality-specific low-dimensional representations stored in obsm
+    - RNA and Protein `.h5ad` files should contain valid `var_names`
+
+
+    `sections.txt` defines the section order, with one section name per line:
+
+    ```text
+    s1
+    s2
+    s3
+    ...
     ```
+
+
+
+- Run build_your_own_dict.py:
+
+    ```bash
     python Build_your_own_dict.py --project-root /path/to/your_data_path
     ```
 
 - Output file structure:
+
+    ```text
+    your_data_path/
+    └── Data_preprocessing/
+        ├── feature_dict_concat.pkl
+        ├── data_dict_processed_concat.pkl
+        └── spatial_loc_dict.pkl
     ```
-    your_data_path/Data_preprocessing/
-    ├── feature_dict_concat.pkl
-    ├── data_dict_processed_concat.pkl
-    ├── spatial_loc_dict.pkl
-    ```
+
+
 
 ## 2.3. Training and clustering
 
-Ensure your `/path/to/your_data_path/` contains `/Data_preprocessing/` folder. 
+Before training, ensure your ```/path/to/your_data_path/``` contains ```/Data_preprocessing/``` folder.
 
-```
+
+
+```bash
 python Training.py --project-root /path/to/your_data_path
 python Clustering.py --project-root /path/to/your_data_path --n-clusters 25
 ```
 
-Embedding and clustering results will be saved in `/Embedding` and `/Clustering`.
+
+The trained model, COSIE embeddings, and clustering results will be saved in ```Training```, ```Embedding```, and  ```Clustering```.
 
 
 
