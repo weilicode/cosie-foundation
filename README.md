@@ -288,7 +288,7 @@ python Inference.py --project-root /path/to/your_data_path
 ```
 
 
-The trained model and COSIE embeddings will be saved in ```Training``` and ```Embedding``` folders, respectively.
+The trained model and COSIE-Foundation embeddings will be saved in ```Training``` and ```Embedding``` folders, respectively.
 
 
 
