@@ -35,13 +35,11 @@ def main():
     project_root = args.project_root
     data_root = os.path.join(project_root, "Data_preprocessing")
     training_root = os.path.join(project_root, "Training")
-    embedding_root = os.path.join(project_root, "Embedding")
 
     if not os.path.exists(data_root):
         raise FileNotFoundError(f"Data_preprocessing not found: {data_root}")
 
     os.makedirs(training_root, exist_ok=True)
-    os.makedirs(embedding_root, exist_ok=True)
 
     checkpoint_path = os.path.join(training_root, "cosie_trained.pt")
     subset_index_path = os.path.join(training_root, "sub_indices_list.pkl")
@@ -49,13 +47,12 @@ def main():
     subset_dict_path = os.path.join(training_root, "sub_indices_dict.pkl")
     linkage_path = os.path.join(training_root, "Linkage_indicator.pkl")
     group_info_path = os.path.join(training_root, "section_group_info.pkl")
-    cell_embedding_pkl = os.path.join(embedding_root, "final_embeddings_cell.pkl")
 
     # =========================================================
     # 2. Load preprocessing outputs
     # =========================================================
     print("\n" + "=" * 80)
-    print("Step 1. Load preprocessing outputs")
+    print("Load preprocessing outputs")
     print("=" * 80)
 
     with open(os.path.join(data_root, "feature_dict_concat.pkl"), "rb") as f:
@@ -71,18 +68,11 @@ def main():
     print("Loaded data_dict_processed keys:", data_dict_processed.keys())
     print("Loaded spatial_loc_dict sections:", len(spatial_loc_dict))
 
-    # =========================================================
-    # 3. Determine section list
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 2. Determine section list")
-    print("=" * 80)
+
 
     section_keys = sorted(feature_dict.keys(), key=lambda x: int(x[1:]))
     n_sections = len(section_keys)
 
-    print(f"Total sections = {n_sections}")
-    print("Section keys:", section_keys)
 
     if "HE" not in data_dict_processed:
         raise ValueError("data_dict_processed does not contain 'HE'.")
@@ -93,12 +83,6 @@ def main():
             f"{len(data_dict_processed['HE'])} != {n_sections}"
         )
 
-    # =========================================================
-    # 4. Build training subset
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 3. Build subset indices using HE")
-    print("=" * 80)
 
     sub_indices_list, labels_list = [], []
 
@@ -143,15 +127,7 @@ def main():
         sub_indices_dict
     )
 
-    print("Subset completed.")
-    print("Subset feature_dict sections:", len(feature_dict_sub))
 
-    # =========================================================
-    # 5. Compute entropy
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 4. Compute entropy for each section")
-    print("=" * 80)
 
     entropies = [cluster_entropy(x) for x in labels_list]
     entropy_dict = {sec: entropies[i] for i, sec in enumerate(section_keys)}
@@ -159,12 +135,6 @@ def main():
     for sec in section_keys:
         print(f"{sec}: entropy = {entropy_dict[sec]:.4f}")
 
-    # =========================================================
-    # 6. Group sections by modality combination
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 5. Group sections by modality combination")
-    print("=" * 80)
 
     group_dict = {}
 
@@ -172,21 +142,13 @@ def main():
         mods = tuple(sorted(feature_dict[sec].keys()))
         group_dict.setdefault(mods, []).append(sec)
 
-    print("Section groups by modality combination:")
     for mods, secs in group_dict.items():
         print(f"  {mods}: {secs}")
 
     with open(group_info_path, "wb") as f:
         pickle.dump(group_dict, f)
 
-    print(f"Saved group info to: {group_info_path}")
 
-    # =========================================================
-    # 7. Select representative section
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 6. Select representative section for each group")
-    print("=" * 80)
 
     rep_dict = {}
 
@@ -198,12 +160,6 @@ def main():
             f"(entropy = {entropy_dict[best_sec]:.4f})"
         )
 
-    # =========================================================
-    # 8. Build Linkage_indicator
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 7. Build Linkage_indicator")
-    print("=" * 80)
 
     Linkage_indicator = {}
 
@@ -241,20 +197,14 @@ def main():
                     (b, a) for a, b in linkage_pairs
                 ]
 
-    print("Constructed Linkage_indicator:")
-    for k, v in Linkage_indicator.items():
-        print(f"  {k}: {v}")
 
     with open(linkage_path, "wb") as f:
         pickle.dump(Linkage_indicator, f)
 
     print(f"Saved Linkage_indicator to: {linkage_path}")
 
-    # =========================================================
-    # 9. Train model
-    # =========================================================
     print("\n" + "=" * 80)
-    print("Step 8. Train COSIE model on subset data")
+    print("Train COSIE model on subset data")
     print("=" * 80)
 
     torch.cuda.empty_cache()
@@ -280,63 +230,9 @@ def main():
         n_y=1
     )
 
-    print("Subset training finished.")
+    print("Training finished.")
 
-    # =========================================================
-    # 10. Load trained model
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 9. Reload trained checkpoint")
-    print("=" * 80)
-
-    torch.cuda.empty_cache()
-
-    model = COSIE_model(config, feature_dict)
-
-    if not os.path.exists(checkpoint_path):
-        pt_files = [x for x in os.listdir(training_root) if x.endswith(".pt")]
-
-        if len(pt_files) == 1:
-            checkpoint_path = os.path.join(training_root, pt_files[0])
-            print(f"[Warning] Using detected checkpoint: {checkpoint_path}")
-        else:
-            raise FileNotFoundError(
-                f"Checkpoint not found at {checkpoint_path}, "
-                f"and could not uniquely infer one from {training_root}"
-            )
-
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-    model.to(device)
-
-    print(f"Loaded checkpoint from: {checkpoint_path}")
-
-    # =========================================================
-    # 11. Infer embeddings on full data
-    # =========================================================
-    print("\n" + "=" * 80)
-    print("Step 10. Infer embeddings on full data")
-    print("=" * 80)
-
-    final_embeddings = infer_embeddings(
-        model,
-        feature_dict,
-        spatial_loc_dict,
-        device,
-        config["training"]["knn_neighbors_spatial"],
-        config["training"]["knn_neighbors_feature"]
-    )
-
-    with open(cell_embedding_pkl, "wb") as f:
-        pickle.dump(final_embeddings, f)
-
-    print(f"Saved full-data embeddings to: {cell_embedding_pkl}")
-
-    torch.cuda.empty_cache()
-
-    print("\n" + "=" * 80)
-    print("All training and inference steps completed successfully.")
-    print("=" * 80)
-
+    
 
 if __name__ == "__main__":
     main()

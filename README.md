@@ -276,7 +276,7 @@ If your data already contain low-dimensional modality representations, you can s
 
 
 
-## 2.3. Training and clustering
+## 2.3. Training and inference
 
 Before training, ensure your ```/path/to/your_data_path/``` contains ```/Data_preprocessing/``` folder.
 
@@ -284,11 +284,11 @@ Before training, ensure your ```/path/to/your_data_path/``` contains ```/Data_pr
 
 ```bash
 python Training.py --project-root /path/to/your_data_path
-python Clustering.py --project-root /path/to/your_data_path --n-clusters 25
+python Inference.py --project-root /path/to/your_data_path
 ```
 
 
-The trained model, COSIE embeddings, and clustering results will be saved in ```Training```, ```Embedding```, and  ```Clustering```.
+The trained model and COSIE embeddings will be saved in ```Training``` and ```Embedding``` folders, respectively.
 
 
 
