@@ -123,7 +123,7 @@ Given a query section (HE/RNA/Protein as input), COSIE-Foundation projects it in
 
 Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RNA & Protein data for the query section.
 
-- Download the virtual prediction reference from **Hugging face**:[Virtual_prediction_reference.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
+- Download the virtual prediction reference from **Hugging face**: [Virtual_prediction_reference.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main). Then unzip and place it under: `<inference-root>/Virtual_prediction_reference/`
 
 - Make sure the previous label transfer has been completed and the following file exists:
 
@@ -141,6 +141,46 @@ Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RN
 
     - `adata_query_predicted.h5ad` — predicted RNA & Protein data
 
+
+## 1.3 Confidence estimation for virtual prediction
+
+After virtual prediction, users can optionally estimate spatially resolved confidence for selected genes or proteins using the [UTOPIA](https://www.biorxiv.org/content/10.64898/2026.03.01.708850v1)-based confidence framework. High-confidence features and spatial regions can be prioritized, whereas low-confidence predictions should be interpreted cautiously.
+
+- Make sure virtual prediction has been completed and the following files exist:
+    - `<inference-root>/adata_query_inferred.h5ad`
+    - `<inference-root>/adata_query_predicted.h5ad`
+
+- Download [Confidence_calibration.zip](https://huggingface.co/pennweili/cosie-foundation/tree/main) from **Hugging Face**, and place the extracted `Confidence_calibration` folder under the `Uncertainty` directory.
+
+- Navigate to the uncertainty directory:
+
+    ```bash
+    cd ../Uncertainty
+    ```
+
+
+- Estimate confidence for proteins:
+
+    ```bash
+    python Confidence_estimation.py \
+        --prediction <inference-root>/adata_query_predicted.h5ad \
+        --protein \
+        --targets CD68 \
+        --out ./Confidence
+    ```
+
+- Estimate confidence for genes:
+
+    ```bash
+    python Confidence_estimation.py \
+        --prediction <inference-root>/adata_query_predicted.h5ad \
+        --rna \
+        --targets APOC1 \
+        --out ./Confidence
+    ```
+
+
+The confidence scores will be saved in `./Confidence/<target>_<modality>/confidence_results.npz`. Spatial prediction and confidence maps will also be generated as PNG files for visualization. Confidence scores range from 0 to 1, with higher values indicating greater confidence in the corresponding virtual prediction.
 
 
 
