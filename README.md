@@ -161,7 +161,7 @@ After virtual prediction, users can optionally estimate spatially resolved confi
 
 - Estimate confidence for proteins:
 
-    ```bash
+    ```
     python Confidence_estimation.py \
         --prediction <inference-root>/adata_query_predicted.h5ad \
         --protein \
@@ -171,7 +171,7 @@ After virtual prediction, users can optionally estimate spatially resolved confi
 
 - Estimate confidence for genes:
 
-    ```bash
+    ```
     python Confidence_estimation.py \
         --prediction <inference-root>/adata_query_predicted.h5ad \
         --rna \
