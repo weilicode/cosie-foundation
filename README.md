@@ -333,4 +333,4 @@ The trained model and COSIE-Foundation embeddings will be saved in ```Training``
 
 
 # Questions
-If you have any questions about COSIE-Foundation, feel free to open an [issue](https://github.com/weilicode/cosie-foundation/issues) or contact us via email(Wei.Li@PennMedicine.upenn.edu).
+If you have any questions about COSIE-Foundation, feel free to open an [issue](https://github.com/weilicode/cosie-foundation/issues) or contact us via email (Wei.Li@PennMedicine.upenn.edu).
