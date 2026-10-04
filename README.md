@@ -15,7 +15,7 @@
    - Virtual gene & protein prediction
 
 **2. Training your own model from scratch**  
-   - Train COSIE-Foundation on your own ultra large-scale spatial multimodal dataset.
+   - Train COSIE-Foundation on your own large-scale spatial multimodal dataset.
 
 
 
