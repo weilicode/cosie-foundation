@@ -144,7 +144,7 @@ Given the inferred COSIE embeddings from step 1.1, this step predicts virtual RN
 
 ## 1.3 Confidence estimation for virtual prediction
 
-After virtual prediction, users can optionally estimate spatially resolved confidence for selected genes or proteins using the [UTOPIA](https://www.biorxiv.org/content/10.64898/2026.03.01.708850v1)-based confidence framework. High-confidence features and spatial regions can be prioritized, whereas low-confidence predictions should be interpreted cautiously.
+After virtual prediction, users can optionally estimate spatially resolved confidence for genes and proteins using the [UTOPIA](https://www.biorxiv.org/content/10.64898/2026.03.01.708850v1)-based confidence framework. High-confidence features and spatial regions can be prioritized, whereas low-confidence predictions should be interpreted cautiously.
 
 - Make sure virtual prediction has been completed and the following files exist:
     - `<inference-root>/adata_query_inferred.h5ad`
